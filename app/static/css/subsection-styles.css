@@ -1,0 +1,95 @@
+/* subsection-styles.css */
+
+/* Enhance main section headers */
+main h2 {
+    border-bottom: 2px solid #4285F4;
+    padding-bottom: 10px;
+    margin-top: 40px;
+}
+
+/* Style subsection headers */
+main h3 {
+    color: #34A853;
+    margin-top: 30px;
+    padding-left: 15px;
+    border-left: 3px solid #FBBC05;
+}
+
+/* Add some spacing and styling to subsections */
+main h3 + p,
+main h3 + ul,
+main h3 + ol,
+main h3 + div {
+    margin-left: 18px;
+    padding-left: 15px;
+    border-left: 1px solid #EA4335;
+}
+
+/* Improve table readability */
+table {
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table th {
+    background-color: #f8f9fa;
+}
+
+/* Style images */
+img.img-fluid {
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Enhance sidebar subsection links */
+.sidebar .nav-link + .nav .nav-link {
+    font-size: 0.9em;
+    padding: 0.25rem 1rem 0.25rem 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    main h2 {
+        margin-top: 30px;
+    }
+
+    main h3 {
+        margin-top: 20px;
+    }
+
+    main h3 + p,
+    main h3 + ul,
+    main h3 + ol,
+    main h3 + div {
+        margin-left: 10px;
+        padding-left: 10px;
+    }
+}
+
+main img {
+    max-width: 100%; /* Ensures image doesn't exceed its container */
+    height: auto; /* Maintains aspect ratio */
+    width: auto; /* Allow the image to be smaller than its container */
+    max-height: 500px; /* Set a maximum height, adjust as needed */
+}
+
+/* For extra small images, you can create a specific class */
+.img-small {
+    max-width: 300px; /* Adjust this value as needed */
+}
+
+/* For medium-sized images */
+.img-medium {
+    max-width: 500px; /* Adjust this value as needed */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    main img {
+        max-height: 300px; /* Smaller maximum height on mobile devices */
+    }
+    
+    .img-small, .img-medium {
+        max-width: 100%; /* Full width on small screens */
+    }
+}

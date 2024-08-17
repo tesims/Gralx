@@ -1,0 +1,94 @@
+/* style.css */
+body {
+    font-family: 'Noto Sans', sans-serif;
+    padding-top: 20px;
+}
+
+.navbar-brand {
+    font-family: 'Google Sans', sans-serif;
+}
+
+h1.display-4 {
+    font-family: 'Google Sans', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+.text-center img {
+    max-height: 200px;
+}
+
+.text-center .btn-lg {
+    margin: 10px;
+}
+
+.card-header {
+    font-size: 1.2em;
+}
+
+.form-group label, .form-check label {
+    font-size: 1.1em;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+.form-check-inline {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.btn-group .btn {
+    margin: 0 5px;
+}
+
+.btn-block {
+    border-radius: 50px; /* Adjust the value as needed to make the button more oval-shaped */
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.list-group-item {
+    font-size: 1.1em;
+}
+
+@media (max-width: 576px) {
+    .form-check-label {
+        display: block;
+        margin-top: 5px;
+    }
+}
+
+#mediaCarousel {
+    max-width: 800px; /* Adjust this value as needed */
+    margin: 0 auto; /* Centers the carousel if it's narrower than its container */
+}
+
+.carousel-image-container {
+    width: 100%;
+    height: 800px; /* Adjust this value to your desired fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.carousel-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Adjust your existing media query or add this if it doesn't exist */
+@media (max-width: 768px) {
+
+    .carousel-image-container {
+        height: 300px; /* Smaller height for mobile devices */
+    }
+}

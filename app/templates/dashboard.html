@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Dashboard</h1>
+    <p class="text-center">
+        Graxl is still in its infancy, but we're too excited to wait to share our 
+        progress with you. While we're not yet ready to process your large training 
+        datasets, we've built this demo for you. Here, you can test the latest features 
+        and developments to see how Graxl might be useful for you.
+    </p>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.project_name.label(class="form-control-label") }}
+            {{ form.project_name(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.sector.label(class="form-control-label") }}
+            {{ form.sector(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.country.label(class="form-control-label") }}
+            {{ form.country(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label>Mask Options:</label>
+            <div class="d-flex justify-content-between">
+                <div class="form-check form-check-inline">
+                    {{ form.mask_face(class="form-check-input") }}
+                    {{ form.mask_face.label(class="form-check-label") }}
+                </div>
+                <div class="form-check form-check-inline">
+                    {{ form.mask_fullbody(class="form-check-input") }}
+                    {{ form.mask_fullbody.label(class="form-check-label") }}        
+                </div>
+                <div class="form-check form-check-inline">
+                    {{ form.mask_logo(class="form-check-input") }}
+                    {{ form.mask_logo.label(class="form-check-label") }}
+                </div>
+                <div class="form-check form-check-inline">
+                    {{ form.mask_location(class="form-check-input") }}
+                    {{ form.mask_location.label(class="form-check-label") }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.prompt.label(class="form-control-label") }}
+            {{ form.prompt(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.upload_type.label(class="form-control-label") }}
+            {{ form.upload_type(class="form-control", id="uploadType") }}
+        </div>
+        <div id="audioField" style="display: none;">
+            {{ form.audio.label(class="form-control-label") }}
+            {{ form.audio(class="form-control-file") }}
+        </div>
+        <div id="textField" style="display: none;">
+            {{ form.text.label(class="form-control-label") }}
+            {{ form.text(class="form-control-file") }}
+        </div>
+        <div id="imageField" style="display: none;">
+            {{ form.image.label(class="form-control-label") }}
+            {{ form.image(class="form-control-file") }}
+        </div>
+        <div id="videoField" style="display: none;">
+            {{ form.video.label(class="form-control-label") }}
+            {{ form.video(class="form-control-file") }}
+        </div>
+        <div class="form-group form-check">
+            {{ form.terms(class="form-check-input") }}
+            {{ form.terms.label(class="form-check-label") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('uploadType').addEventListener('change', function() {
+            var selectedType = this.value;
+            document.getElementById('audioField').style.display = 'none';
+            document.getElementById('textField').style.display = 'none';
+            document.getElementById('imageField').style.display = 'none';
+            document.getElementById('videoField').style.display = 'none';
+
+            if (selectedType === 'audio') {
+                document.getElementById('audioField').style.display = 'block';
+            } else if (selectedType === 'text') {
+                document.getElementById('textField').style.display = 'block';
+            } else if (selectedType === 'image') {
+                document.getElementById('imageField').style.display = 'block';
+            } else if (selectedType === 'video') {
+                document.getElementById('videoField').style.display = 'block';
+            }
+        });
+    });
+</script>
+{% endblock %}

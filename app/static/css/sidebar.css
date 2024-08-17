@@ -1,0 +1,66 @@
+/* sidebar.css */
+
+/* Ensure the header is above everything */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+}
+
+/* Adjust sidebar to be below the header */
+.sidebar {
+    position: fixed;
+    top: 56px; /* Adjust this value based on your header height */
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 48px 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    overflow-y: auto;
+    width: 250px; /* Set a fixed width for the sidebar */
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 104px); /* Subtract header height + sidebar padding */
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+}
+
+.sidebar .nav-link.active {
+    color: #007bff;
+}
+
+/* Adjust main content to be below header and next to sidebar */
+main {
+    padding-top: 106px; /* Header height + some extra padding */
+    margin-left: 250px; /* Should match sidebar width */
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        padding-top: 15px;
+        margin-top: 56px; /* Add margin to account for fixed header */
+    }
+    
+    .sidebar-sticky {
+        height: auto;
+    }
+    
+    main {
+        padding-top: 76px; /* Adjust based on header height */
+        margin-left: 0;
+    }
+}

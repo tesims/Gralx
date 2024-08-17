@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#introduction">Introduction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#core-concepts">Core Concepts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#text-mask">Text Mask Module</a>
+                        <ul class="nav flex-column ml-3">
+                            <li class="nav-item"><a class="nav-link" href="#text-process-overview">Process Overview</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#text-pii-identification">PII Identification</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#text-context-analysis">Context Analysis</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#text-variable-replacement">Variable Replacement</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#text-output-generation">Output Generation</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#image-mask">Image Mask Module</a>
+                        <ul class="nav flex-column ml-3">
+                            <li class="nav-item"><a class="nav-link" href="#image-process-overview">Process Overview</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#image-text-extraction">Text Extraction and Masking</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#image-visual-pii">Visual PII Identification</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#image-context-preservation">Context Preservation</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#image-reconstruction">Image Reconstruction</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#audio-mask">Audio Mask Module</a>
+                        <ul class="nav flex-column ml-3">
+                            <li class="nav-item"><a class="nav-link" href="#audio-process-overview">Process Overview</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#audio-transcription">Transcription</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#audio-text-masking">Text Masking in Audio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#audio-tone-analysis">Tone and Style Analysis</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#audio-regeneration">Audio Regeneration</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#video-mask">Video Mask Module</a>
+                        <ul class="nav flex-column ml-3">
+                            <li class="nav-item"><a class="nav-link" href="#video-process-overview">Process Overview</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-scene-splitting">Scene Splitting with BMF</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-llama-analysis">VideoLLaMA Analysis</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-pii-identification">PII Identification in Video</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-context-analysis">Context Analysis</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-masking-strategy">Masking Strategy Determination</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-masking-application">Visual, Audio, and Text Overlay Masking</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#video-reconstruction">Video Reconstruction</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#data-schema">Data Schema</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#integration">Integration and Workflow</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#technical-details">Technical Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#privacy">Privacy and Security</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api-reference">API Reference</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#troubleshooting">Troubleshooting and FAQs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#future-developments">Future Developments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#glossary">Glossary</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="container mt-5">
+                <h1 class="mb-4" id="introduction">Introduction</h1>
+                <p>Welcome to the Multimodal Mask Modules documentation. This project aims to provide comprehensive PII masking across various media types.</p>
+                <img src="{{ url_for('static', filename='images/docs/multimodal_mask_flow.png') }}" alt="Audio Mask Module Flow Diagram" class="img-fluid mb-3">
+
+                
+                <h2 class="mt-4" id="core-concepts">Core Concepts</h2>
+                <p>Understanding PII, masking techniques, and the role of LLMs in our project.</p>
+
+                <h2 class="mt-4" id="text-mask">Text Mask Module</h2>
+                    <img src="{{ url_for('static', filename='images/docs/text_mask_flow.png') }}" alt="Text Mask Module Flow Diagram" class="img-fluid mb-3">
+
+                    <h3 id="text-process-overview">Process Overview</h3>
+                        <ol>
+                            <li><strong>User Submits Text:</strong> User uploads text that may contain PII (Personally Identifiable Information).</li>
+                            <li><strong>PII Identification:</strong> Text is scanned to identify PII data such as names, addresses, phone numbers, etc.</li>
+                            <li><strong>Variable Copying:</strong> Identified PII variables are copied for reference.</li>
+                            <li><strong>Context Analysis:</strong> Text, along with identified PII variables, is sent to a private hosted open-source LLM. The LLM analyzes the text to identify key contexts and attributes associated with each PII variable (e.g., relationships, roles, importance).</li>
+                            <li><strong>Context and Variable Storage:</strong> Important contexts and attributes related to each PII variable are stored alongside the copied variables.</li>
+                            <li><strong>Public LLM Prompting:</strong> A list of contexts and attributes for each PII variable is sent to a public LLM. The public LLM is prompted to generate new variables that match the identified contexts and attributes (e.g., generating a new name with similar social or relational context).</li>
+                            <li><strong>PII Variable Swapping:</strong> The generated variables are swapped with the original PII variables in the text.</li>
+                            <li><strong>Output:</strong> The processed text, now free of PII and with contextually appropriate replacements, is sent back to the user.</li>
+                        </ol>
+
+                <h2 class="mt-4" id="image-mask">Image Mask Module</h2>
+                    <img src="{{ url_for('static', filename='images/docs/image_mask_flow.png') }}" alt="Image Mask Module Flow Diagram" class="img-fluid mb-3">
+
+                    <h3 id="image-process-overview">Process Overview</h3>
+                        <ol>
+                            <li><strong>Upload Image:</strong> User uploads an image that may contain visual PII.</li>
+                            <li><strong>Text Mask Application:</strong> Any text within the image is extracted and processed using the Text Mask steps to identify and replace PII.</li>
+                            <li><strong>Image Analysis:</strong> The image is analyzed to identify and tag PII elements (e.g., faces, license plates).</li>
+                            <li><strong>Context Extraction:</strong> Context around the PII elements is extracted (e.g., relationship between elements, scene context).</li>
+                            <li><strong>Image Replacement:</strong> Using the context, new images or elements are generated to replace the PII elements while preserving the original context.</li>
+                            <li><strong>Image Reconstruction:</strong> The new elements are integrated into the image, preserving the visual context and coherence.</li>
+                            <li><strong>Output:</strong> The processed image, free of visual PII, is sent back to the user.</li>
+                        </ol>
+                
+
+                <h2 class="mt-4" id="audio-mask">Audio Mask Module</h2>
+                    <img src="{{ url_for('static', filename='images/docs/audio_mask_flow.png') }}" alt="Audio Mask Module Flow Diagram" class="img-fluid mb-3">
+
+                    <h3 id="audio-process-overview">Process Overview</h3>
+                        <ol>
+                            <li><strong>Upload Audio:</strong> User uploads audio that may contain audible PII.</li>
+                            <li><strong>Transcription:</strong> Audio is transcribed to text.</li>
+                            <li><strong>Text Mask Application:</strong> The transcript is processed using the Text Mask steps to identify and replace PII.</li>
+                            <li><strong>Tone and Style Analysis:</strong> The original audio is analyzed for tone, speaking style, and other vocal characteristics.</li>
+                            <li><strong>Audio Regeneration:</strong> Using the processed transcript, new audio is generated using an API like Eleven Labs, preserving the original tone and speaking style.</li>
+                            <li><strong>Audio Replacement:</strong> The new audio is integrated back into the original audio track.</li>
+                            <li><strong>Output:</strong> The processed audio, free of audible PII, is sent back to the user.</li>
+                        </ol>
+
+                <h2 class="mt-4" id="video-mask">Video Mask Module</h2>
+                    <img src="{{ url_for('static', filename='images/docs/video_mask_flow.png') }}" alt="Video Mask Module Flow Diagram" class="img-fluid mb-3">
+
+                    <h3 id="video-process-overview">Process Overview</h3>
+                        <ol>
+                            <li><strong>Upload Video:</strong> User uploads a video that may contain visual, audible, and textual PII.</li>
+                            <li><strong>Initial Processing:</strong> The unmasked video is processed using BMF.</li>
+                            <li><strong>Scene Splitting:</strong> BMF splits the video into multiple smaller videos for each scene.</li>
+                            <li><strong>Frame and Audio Extraction:</strong> BMF extracts key frames and audio from each scene.</li>
+                            <li><strong>VideoLLaMA Analysis:</strong> Each scene is processed through VideoLLaMA. VideoLLaMA generates detailed scene descriptions, including:
+                                <ul>
+                                    <li>People's appearances, actions, and relationships</li>
+                                    <li>Objects and settings</li>
+                                    <li>Visible text in the scene</li>
+                                </ul>
+                            </li>
+                            <li><strong>PII Identification:</strong> Analyze VideoLLaMA output to identify potential visual PII:
+                                <ul>
+                                    <li>Faces, distinctive features, or clothing of individuals</li>
+                                    <li>Location information</li>
+                                    <li>Sensitive objects or documents</li>
+                                    <li>Cross-reference with audio transcript for additional context and audible PII</li>
+                                </ul>
+                            </li>
+                            <li><strong>Context Analysis:</strong> Use VideoLLaMA descriptions to understand the context of identified PII and determine importance and relationships of identified elements.</li>
+                            <li><strong>PII Masking Strategy Determination:</strong> Based on context, decide on appropriate masking strategies for each PII element:
+                                <ul>
+                                    <li>Visual PII: Face blurring/replacement, object removal/replacement, text redaction/replacement</li>
+                                    <li>Audible PII: Voice modulation, audio removal, or replacement</li>
+                                </ul>
+                            </li>
+                            <li><strong>Visual Mask Application:</strong> Apply determined masking strategies to video frames using BMF.</li>
+                            <li><strong>Audio Mask Application:</strong> Process audio to mask or replace identified PII. Analyze and preserve original tone and speaking style where possible.</li>
+                            <li><strong>Text Overlay Mask Application:</strong> Process any text overlays or subtitles to identify and replace PII.</li>
+                            <li><strong>Reanimation and Reconstruction:</strong> Use BMF to reintegrate masked frames and audio. Ensure synchronization between visual and audio elements. Reconstruct the full video from processed scenes.</li>
+                            <li><strong>Output:</strong> The fully processed video, free of all types of PII, is sent back to the user. Provide a report on masked elements and contexts (if requested).</li>
+                        </ol>
+
+                <h2 class="mt-4" id="data-schema">Data Schema</h2>
+                <img src="{{ url_for('static', filename='images/docs/db_schema.png') }}" alt="Database Schema Diagram" class="img-fluid mb-3">
+
+                
+                <h3>Users Table</h3>
+                <p>Stores user information and account details, including support for anonymous users.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>user_id</td><td>UUID (PK)</td><td>Unique identifier for the user</td></tr>
+                        <tr><td>email</td><td>VARCHAR</td><td>User's email address (nullable for anonymous users)</td></tr>
+                        <tr><td>password_hash</td><td>VARCHAR</td><td>Hashed password (nullable for anonymous users)</td></tr>
+                        <tr><td>session_id</td><td>UUID (Unique)</td><td>Unique identifier for the session (used for anonymous users)</td></tr>
+                        <tr><td>is_anonymous</td><td>BOOLEAN</td><td>Indicates if the user is anonymous (default: TRUE)</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of account creation</td></tr>
+                        <tr><td>updated_at</td><td>TIMESTAMP</td><td>Timestamp of last account update</td></tr>
+                    </tbody>
+                </table>
+    
+                <h3>Projects Table</h3>
+                <p>Stores information about individual user projects, with support for linking to either a user or session.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>project_id</td><td>UUID (PK)</td><td>Unique identifier for the project</td></tr>
+                        <tr><td>user_id</td><td>UUID (FK)</td><td>Reference to the user (nullable for anonymous projects)</td></tr>
+                        <tr><td>session_id</td><td>UUID (FK)</td><td>Reference to the session (used if user_id is NULL)</td></tr>
+                        <tr><td>name</td><td>VARCHAR</td><td>Name of the project</td></tr>
+                        <tr><td>description</td><td>TEXT</td><td>Project description</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of project creation</td></tr>
+                        <tr><td>updated_at</td><td>TIMESTAMP</td><td>Timestamp of last project update</td></tr>
+                    </tbody>
+                </table>
+    
+                <h3>Media Table</h3>
+                <p>Stores information about uploaded media files (text, image, audio, video), linked to a project and user or session.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>media_id</td><td>UUID (PK)</td><td>Unique identifier for the media file</td></tr>
+                        <tr><td>project_id</td><td>UUID (FK)</td><td>Reference to the project</td></tr>
+                        <tr><td>user_id</td><td>UUID (FK)</td><td>Reference to the user (nullable for anonymous uploads)</td></tr>
+                        <tr><td>session_id</td><td>UUID (FK)</td><td>Reference to the session (used if user_id is NULL)</td></tr>
+                        <tr><td>media_type</td><td>VARCHAR</td><td>Type of media (text, image, audio, video)</td></tr>
+                        <tr><td>original_file_path</td><td>VARCHAR</td><td>File path to the original media file</td></tr>
+                        <tr><td>processed_file_path</td><td>VARCHAR</td><td>File path to the processed media file</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of media upload</td></tr>
+                        <tr><td>processed_at</td><td>TIMESTAMP</td><td>Timestamp of when the media was processed</td></tr>
+                    </tbody>
+                </table>
+    
+                <h3>PII_Variables Table</h3>
+                <p>Stores identified PII variables from the media.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>pii_variable_id</td><td>UUID (PK)</td><td>Unique identifier for the PII variable</td></tr>
+                        <tr><td>media_id</td><td>UUID (FK)</td><td>Reference to the media file</td></tr>
+                        <tr><td>variable_type</td><td>VARCHAR</td><td>Type of PII (name, address, etc.)</td></tr>
+                        <tr><td>original_value</td><td>VARCHAR</td><td>Original PII value</td></tr>
+                        <tr><td>context</td><td>TEXT</td><td>Context and attributes of the PII</td></tr>
+                        <tr><td>generated_value</td><td>VARCHAR</td><td>Generated value to replace the original</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of when PII was identified</td></tr>
+                    </tbody>
+                </table>
+    
+                <h3>Process_Log Table</h3>
+                <p>Stores logs of processing steps performed on media files.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>log_id</td><td>UUID (PK)</td><td>Unique identifier for the log entry</td></tr>
+                        <tr><td>media_id</td><td>UUID (FK)</td><td>Reference to the media file</td></tr>
+                        <tr><td>step</td><td>VARCHAR</td><td>Description of the processing step</td></tr>
+                        <tr><td>status</td><td>VARCHAR</td><td>Status of the step (e.g., completed, failed)</td></tr>
+                        <tr><td>log_details</td><td>TEXT</td><td>Detailed information about the process</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of the log entry</td></tr>
+                    </tbody>
+                </table>
+    
+                <h3>Context_Analysis Table</h3>
+                <p>Stores analysis results from the LLMs.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>analysis_id</td><td>UUID (PK)</td><td>Unique identifier for the analysis</td></tr>
+                        <tr><td>pii_variable_id</td><td>UUID (FK)</td><td>Reference to the PII variable</td></tr>
+                        <tr><td>llm_type</td><td>VARCHAR</td><td>Type of LLM used (private, public)</td></tr>
+                        <tr><td>context_details</td><td>TEXT</td><td>Detailed context analysis</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of when analysis was done</td></tr>
+                    </tbody>
+                </table>
+    
+                <h3>Reports Table</h3>
+                <p>Stores information on generated reports.</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>report_id</td><td>UUID (PK)</td><td>Unique identifier for the report</td></tr>
+                        <tr><td>project_id</td><td>UUID (FK)</td><td>Reference to the project</td></tr>
+                        <tr><td>media_id</td><td>UUID (FK)</td><td>Reference to the media file</td></tr>
+                        <tr><td>report_content</td><td>TEXT</td><td>Content of the report</td></tr>
+                        <tr><td>created_at</td><td>TIMESTAMP</td><td>Timestamp of report generation</td></tr>
+                    </tbody>
+                </table>
+
+
+                <h2 class="mt-4" id="integration">Integration and Workflow</h2>
+                <p>How all modules work together and typical user workflows.</p>
+
+                <h2 class="mt-4" id="technical-details">Technical Details</h2>
+                <p>In-depth information on LLM integration, BMF usage, and VideoLLaMA implementation.</p>
+
+                <h2 class="mt-4" id="privacy">Privacy and Security Considerations</h2>
+                <p>Our approach to handling sensitive data and ensuring security.</p>
+
+                <h2 class="mt-4" id="api-reference">API Reference</h2>
+                <p>Detailed API documentation for each module.</p>
+
+                <h2 class="mt-4" id="troubleshooting">Troubleshooting and FAQs</h2>
+                <p>Common issues, their solutions, and frequently asked questions.</p>
+
+                <h2 class="mt-4" id="future-developments">Future Developments</h2>
+                <p>Roadmap and planned features for the Multimodal Mask Modules project.</p>
+
+                <h2 class="mt-4" id="glossary">Glossary</h2>
+                <p>Definitions of key terms used throughout the documentation.</p>
+
+                <!-- Add more content sections as needed -->
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+{% endblock %}

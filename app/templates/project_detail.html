@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Project Details</h1>
+        <table class="table">
+            <tr>
+                <th>Project Name</th>
+                <td>{{ project.name }}</td>
+            </tr>
+            <tr>
+                <th>Sector</th>
+                <td>{{ project.sector }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ project.country }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ project.description }}</td>
+            </tr>
+            {% if media %}
+            <tr>
+                <th>Media Type</th>
+                <td>{{ media.media_type }}</td>
+            </tr>
+            <tr>
+                <th>File Path</th>
+                <td>{{ media.original_file_path }}</td>
+            </tr>
+            {% endif %}
+        </table>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+{% endblock %}
