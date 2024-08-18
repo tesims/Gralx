@@ -3,10 +3,23 @@
 {% block content %}
     <div class="container mt-5">
         <h1>Project Details</h1>
-        <table class="table">
+        <h2>Project Information</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>Variable</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <th>Project ID</th>
+                <td>{{ project.project_id }}</td>
+            </tr>
             <tr>
                 <th>Project Name</th>
                 <td>{{ project.name }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ project.description }}</td>
             </tr>
             <tr>
                 <th>Sector</th>
@@ -17,20 +30,79 @@
                 <td>{{ project.country }}</td>
             </tr>
             <tr>
-                <th>Description</th>
-                <td>{{ project.description }}</td>
+                <th>Mask Face</th>
+                <td>{{ project.mask_face }}</td>
             </tr>
-            {% if media %}
+            <tr>
+                <th>Mask Fullbody</th>
+                <td>{{ project.mask_fullbody }}</td>
+            </tr>
+            <tr>
+                <th>Mask Logo</th>
+                <td>{{ project.mask_logo }}</td>
+            </tr>
+            <tr>
+                <th>Mask Location</th>
+                <td>{{ project.mask_location }}</td>
+            </tr>
+            <tr>
+                <th>Terms Accepted</th>
+                <td>{{ project.terms }}</td>
+            </tr>
+            <tr>
+                <th>User ID</th>
+                <td>{{ project.user_id }}</td>
+            </tr>
+            <tr>
+                <th>Session ID</th>
+                <td>{{ project.session_id }}</td>
+            </tr>
+            <tr>
+                <th>Created At</th>
+                <td>{{ project.created_at }}</td>
+            </tr>
+        </table>
+
+        {% if media %}
+        <h2>Associated Media</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>Variable</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <th>Media ID</th>
+                <td>{{ media.media_id }}</td>
+            </tr>
+            <tr>
+                <th>Project ID</th>
+                <td>{{ media.project_id }}</td>
+            </tr>
             <tr>
                 <th>Media Type</th>
                 <td>{{ media.media_type }}</td>
             </tr>
             <tr>
-                <th>File Path</th>
+                <th>Original File Path</th>
                 <td>{{ media.original_file_path }}</td>
             </tr>
-            {% endif %}
+            <tr>
+                <th>Processed File Path</th>
+                <td>{{ media.processed_file_path }}</td>
+            </tr>
+            <tr>
+                <th>User ID</th>
+                <td>{{ media.user_id }}</td>
+            </tr>
+            <tr>
+                <th>Session ID</th>
+                <td>{{ media.session_id }}</td>
+            </tr>
         </table>
-        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+        {% else %}
+        <p>No media associated with this project.</p>
+        {% endif %}
+
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
     </div>
 {% endblock %}
