@@ -27,6 +27,7 @@ def dashboard():
             if not user:
                 user = User(session_id=uuid.uuid4(), is_anonymous=True)
                 db.session.add(user)
+                db.session.commit()  # Commit the user to the database
 
             # Create new project
             project = Project(
@@ -38,6 +39,7 @@ def dashboard():
                 country=form.country.data
             )
             db.session.add(project)
+            db.session.commit()  # Commit the project to the database
 
             # Handle file upload based on upload_type
             upload_type = form.upload_type.data
@@ -47,7 +49,11 @@ def dashboard():
                 raise ValueError(f"No file uploaded for {upload_type}")
 
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            upload_folder = current_app.config.get('UPLOAD_FOLDER')
+            if not upload_folder:
+                raise ValueError("UPLOAD_FOLDER not configured")
+
+            file_path = os.path.join(upload_folder, filename)
             file.save(file_path)
 
             media = Media(
@@ -58,8 +64,8 @@ def dashboard():
                 original_file_path=file_path
             )
             db.session.add(media)
+            db.session.commit()  # Commit the media to the database
 
-            db.session.commit()
             flash('Your project has been created!', 'success')
             return redirect(url_for('main.project_detail', project_id=project.project_id))
 
@@ -89,4 +95,3 @@ def documentation():
 @main_bp.route('/profile')
 def profile():
     return render_template('profile.html', title='Profile')
-
