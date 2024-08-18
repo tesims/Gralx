@@ -4,3 +4,6 @@ venv/
 venv/
 venv/
 .env
+app/uploads/
+**/*.pyc
+__pycache__/
