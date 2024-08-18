@@ -88,7 +88,7 @@
             </tr>
             <tr>
                 <th>Processed File Path</th>
-                <td>{{ media.processed_file_path }}</td>
+                <td id="processedFilePath">{{ media.processed_file_path or 'Not processed yet' }}</td>
             </tr>
             <tr>
                 <th>User ID</th>
@@ -99,10 +99,47 @@
                 <td>{{ media.session_id }}</td>
             </tr>
         </table>
+
+        {% if not media.processed_file_path %}
+            <button id="processButton" class="btn btn-primary mt-3">Process Media</button>
+            <div id="processingStatus" class="mt-2"></div>
+        {% else %}
+            <p class="mt-3">Media has been processed.</p>
+        {% endif %}
+
         {% else %}
         <p>No media associated with this project.</p>
         {% endif %}
 
-        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
     </div>
+
+    {% if media and not media.processed_file_path %}
+    <script>
+    document.getElementById('processButton').addEventListener('click', function() {
+        this.disabled = true;
+        document.getElementById('processingStatus').innerHTML = 'Processing...';
+
+        fetch('/process/{{ project.project_id }}', {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('processingStatus').innerHTML = 'Error: ' + data.error;
+            } else {
+                document.getElementById('processingStatus').innerHTML = 'Processing complete.';
+                document.getElementById('processedFilePath').innerHTML = data.processed_file_path;
+                this.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            document.getElementById('processingStatus').innerHTML = 'An error occurred during processing.';
+        })
+        .finally(() => {
+            this.disabled = false;
+        });
+    });
+    </script>
+    {% endif %}
 {% endblock %}

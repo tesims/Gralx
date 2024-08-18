@@ -6,6 +6,7 @@ from app.models import User, Project, Media
 from app.forms import DashboardForm
 import uuid
 from app.processing import process_video, process_audio, process_image, process_text
+from flask import jsonify
 
 main_bp = Blueprint('main', __name__)
 
@@ -83,9 +84,6 @@ def dashboard():
 def project_detail(project_id):
     project = Project.query.get_or_404(project_id)
     media = Media.query.filter_by(project_id=project.project_id).first()
-    print(f"Displaying project: {project.name}")
-    if media:
-        print(f"Associated media: {media.media_type}")
     return render_template('project_detail.html', project=project, media=media)
 
 @main_bp.route('/documentation')
@@ -95,3 +93,37 @@ def documentation():
 @main_bp.route('/profile')
 def profile():
     return render_template('profile.html', title='Profile')
+
+from flask import jsonify
+from app.processing import process_video, process_audio, process_image, process_text
+
+@main_bp.route('/process/<uuid:project_id>', methods=['POST'])
+def process_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    media = Media.query.filter_by(project_id=project.project_id).first()
+
+    if not media:
+        return jsonify({"error": "No media found for this project"}), 404
+
+    try:
+        # Determine which processing function to use based on media type
+        if media.media_type == 'video':
+            processed_file_path = process_video(media.original_file_path, project)
+        elif media.media_type == 'audio':
+            processed_file_path = process_audio(media.original_file_path, project)
+        elif media.media_type == 'image':
+            processed_file_path = process_image(media.original_file_path, project)
+        elif media.media_type == 'text':
+            processed_file_path = process_text(media.original_file_path, project)
+        else:
+            return jsonify({"error": "Unsupported media type"}), 400
+
+        # Update the media record with the processed file path
+        media.processed_file_path = processed_file_path
+        db.session.commit()
+
+        return jsonify({"message": "Processing complete", "processed_file_path": processed_file_path}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
