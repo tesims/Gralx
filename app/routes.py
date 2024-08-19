@@ -5,7 +5,7 @@ from app.extensions import db
 from app.models import User, Project, Media
 from app.forms import DashboardForm
 import uuid
-from app.processing import process_video, process_audio, process_image, process_text
+from app.processor.processing import process_video, process_audio, process_image, process_text
 from flask import jsonify
 
 main_bp = Blueprint('main', __name__)
@@ -95,7 +95,7 @@ def profile():
     return render_template('profile.html', title='Profile')
 
 from flask import jsonify
-from app.processing import process_video, process_audio, process_image, process_text
+from app.processor.processing import process_video, process_audio, process_image, process_text
 
 @main_bp.route('/process/<uuid:project_id>', methods=['POST'])
 def process_project(project_id):
