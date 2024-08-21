@@ -1,5 +1,6 @@
 # mask_generator.py
 # Functions to generate masks for PII across different media types
+from pii_detector import detect_pii_in_text, detect_pii_in_image, InstanceCounterAnonymizer
 
 def generate_text_mask(text: str, pii_variables: list) -> str:
     """
