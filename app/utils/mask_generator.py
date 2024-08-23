@@ -1,16 +1,40 @@
 # mask_generator.py
 # Functions to generate masks for PII across different media types
-from pii_detector import detect_pii_in_text, detect_pii_in_image, InstanceCounterAnonymizer
+from presidio_analyzer import AnalyzerEngine
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import EngineResult, OperatorConfig
+from typing import Dict, List
 
-def generate_text_mask(text: str, pii_variables: list) -> str:
+from pii_detector import *
+
+
+def generate_text_mask(text: str, pii_characteristics: Dict[str, List[str]], replacements: Dict[str, str]) -> EngineResults:
     """
     Mask PII in a text string.
     :param text: Input text.
     :param pii_variables: List of dictionaries containing PII information.
     :return: Masked text string.
     """
-    # Implement text PII masking logic here
-    pass
+    analyzer = AnalyzerEngine()
+    anonymizer = AnonymizerEngine()
+
+    analyzer_results = analyzer.analyze(text = text, language = "en")
+
+    operators = {}
+
+    for entity_type, replacement in replacements.items():
+        operators[entity_type] = OperatorConfig("replace", {"new_value": replacement})
+
+    operators["DEFAULT"] = OperatorConfig("replace", {"new_value": "[REDACTED]"})
+
+    results = anonymizer.anonymize(
+        text = text,
+        analyzer_results = analyzer_results,
+        operators = operators
+    )
+
+    return result
+    
 
 def generate_image_mask(image_data: str, pii_elements: list) -> str:
     """
