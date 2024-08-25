@@ -1,6 +1,11 @@
 
 # main_processor.py
 # Main processor to handle different media types for PII masking
+from text_processor import *
+from image_processor import *
+from audio_processor import *
+from video_processor import *
+
 
 def process_media(media_path: str, media_type: str) -> str:
     """
@@ -9,7 +14,9 @@ def process_media(media_path: str, media_type: str) -> str:
     :param media_type: Type of the media ('text', 'image', 'audio', 'video').
     :return: Path to the processed media file.
     """
-    if media_type == 'image':
+    if media_type == 'text': 
+        return process_text(media_path)
+    elif media_type == 'image':
         # Call image processing function
         pass
     elif media_type == 'audio':
@@ -21,18 +28,3 @@ def process_media(media_path: str, media_type: str) -> str:
     else:
         raise ValueError("Unsupported media type")
 
-def process_video(file_path, project):
-    # Implementation for video processing
-    pass
-
-def process_audio(file_path, project):
-    # Implementation for audio processing
-    pass
-
-def process_image(file_path, project):
-    # Implementation for image processing
-    pass
-
-def process_text(file_path, project):
-    # Implementation for text processing
-    pass

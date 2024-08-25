@@ -7,34 +7,39 @@ from typing import Dict, List
 
 from pii_detector import *
 
-
-def generate_text_mask(text: str, pii_characteristics: Dict[str, List[str]], replacements: Dict[str, str]) -> EngineResults:
+def generate_text_mask(text: str, pii_characteristics: Dict[str, List[str]], replacements: Dict[str, str]) -> str:
     """
-    Mask PII in a text string.
-    :param text: Input text.
-    :param pii_variables: List of dictionaries containing PII information.
-    :return: Masked text string.
+    Mask PII in a text string by replacing identified entities with their pseudonymized versions.
+    
+    :param text: Original input text
+    :param pii_characteristics: Dictionary of PII types and their characteristics (not used directly, but kept for consistency)
+    :param replacements: Dictionary of PII types and their replacement values
+    :return: Masked text string
     """
     analyzer = AnalyzerEngine()
     anonymizer = AnonymizerEngine()
 
-    analyzer_results = analyzer.analyze(text = text, language = "en")
+    # Analyze the text to identify PII entities
+    analyzer_results = analyzer.analyze(text=text, language="en")
 
-    operators = {}
+    # Create operators for each PII type
+    operators = {
+        entity_type: OperatorConfig("replace", {"new_value": replacement})
+        for entity_type, replacement in replacements.items()
+    }
 
-    for entity_type, replacement in replacements.items():
-        operators[entity_type] = OperatorConfig("replace", {"new_value": replacement})
-
+    # Add a default operator for any unspecified entity types
     operators["DEFAULT"] = OperatorConfig("replace", {"new_value": "[REDACTED]"})
 
-    results = anonymizer.anonymize(
-        text = text,
-        analyzer_results = analyzer_results,
-        operators = operators
+    # Anonymize the text using the created operators
+    anonymized_result = anonymizer.anonymize(
+        text=text,
+        analyzer_results=analyzer_results,
+        operators=operators
     )
 
-    return result
-    
+    return anonymized_result.text
+
 
 def generate_image_mask(image_data: str, pii_elements: list) -> str:
     """

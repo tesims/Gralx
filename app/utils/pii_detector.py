@@ -61,39 +61,62 @@ class InstanceCounterAnonymizer(Operator):
     def operator_type(self) -> OperatorType:
         return OperatorType.Anonymize
 
-def detect_pii_in_text(text: str) -> list:
+def detect_pii_in_text(text: str) -> List[dict]:
     """
     Detect PII in a text string.
     :param text: Input text.
     :return: List of dictionaries containing detected PII information.
     """
-    # Implement text PII detection logic here
-    # Use Presidio to Identify PII Variables
-
-
-    print("Original Text: ")
+    print("Original Text:")
     pprint(text)
+
     analyzer = AnalyzerEngine()
     analyzer_results = analyzer.analyze(text=text, language="en")
-    print("Analyzer Results: ")
-    pprint(analyzer_results)
-    
-    return analyzer_results
 
-def get_anonymized_text(text: str, analyzer_results: dict) -> str:
+    # Convert analyzer results to the desired output format
+    formatted_results = [
+        {
+            "type": result.entity_type,
+            "start": result.start,
+            "end": result.end,
+            "score": result.score
+        }
+        for result in analyzer_results
+    ]
+
+    print("Analyzer Results:")
+    pprint(formatted_results)
+
+    return formatted_results
+
+def get_anonymized_text(text: str, analyzer_results: List[Dict]) -> Tuple[str, Dict]:
     """
     Get Redacted Text with PII Variables Mapped
-    :param text: original text, list of dicts with PII variables
-    :return: text str of redacted text with entity mapping labels
+    :param text: original text
+    :param analyzer_results: list of dicts with PII variables
+    :return: tuple containing:
+             - text str of redacted text with entity mapping labels
+             - dict of entity mappings
     """
     anonymizer_engine = AnonymizerEngine()
     anonymizer_engine.add_anonymizer(InstanceCounterAnonymizer)
 
     entity_mapping = dict()
 
+    # Convert analyzer_results to the format expected by anonymizer_engine
+    presidio_analyzer_results = [
+        {
+            "entity_type": result["type"],
+            "start": result["start"],
+            "end": result["end"],
+            "score": result["score"]
+        }
+        for result in analyzer_results
+    ]
+
     anonymized_result = anonymizer_engine.anonymize(
         text,
-        analyzer_results,
+        presidio_analyzer_results,
         {
             "DEFAULT": OperatorConfig(
                 "entity_counter", {"entity_mapping": entity_mapping}
@@ -101,9 +124,13 @@ def get_anonymized_text(text: str, analyzer_results: dict) -> str:
         },
     )
 
-    print(anonymized_result.text)
-    return anonymized_result.text
+    # Format entity_mapping to match the expected output
+    formatted_entity_mapping = {
+        entity_type: {original: masked for original, masked in mappings.items()}
+        for entity_type, mappings in entity_mapping.items()
+    }
 
+    return anonymized_result.text, formatted_entity_mapping
 
 
 def detect_pii_in_image(image_data: str) -> list:
