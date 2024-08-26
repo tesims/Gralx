@@ -1,8 +1,9 @@
 # pii_detector.py
 # Functions to detect PII in various types of data
-from presidio_analyzer import AnalyzerEngine 
+from presidio_analyzer import AnalyzerEngine, RecognizerResult 
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine, OperatorConfig
 from presidio_anonymizer.operators import Operator, OperatorType
+from presidio_anonymizer.entities import EngineResult, OperatorConfig, RecognizerResult
 
 from typing import List, Dict
 from pprint import pprint
@@ -90,48 +91,39 @@ def detect_pii_in_text(text: str) -> list[dict]:
     return formatted_results
 
 def get_anonymized_text(text: str, analyzer_results: List[Dict]) -> tuple[str, Dict]:
-    """
-    Get Redacted Text with PII Variables Mapped
-    :param text: original text
-    :param analyzer_results: list of dicts with PII variables
-    :return: tuple containing:
-             - text str of redacted text with entity mapping labels
-             - dict of entity mappings
-    """
     anonymizer_engine = AnonymizerEngine()
-    anonymizer_engine.add_anonymizer(InstanceCounterAnonymizer)
-
-    entity_mapping = dict()
 
     # Convert analyzer_results to the format expected by anonymizer_engine
     presidio_analyzer_results = [
-        {
-            "entity_type": result["type"],
-            "start": result["start"],
-            "end": result["end"],
-            "score": result["score"]
-        }
+        RecognizerResult(
+            entity_type=result["type"],
+            start=result["start"],
+            end=result["end"],
+            score=result["score"]
+        )
         for result in analyzer_results
     ]
 
-    anonymized_result = anonymizer_engine.anonymize(
-        text,
-        presidio_analyzer_results,
-        {
-            "DEFAULT": OperatorConfig(
-                "entity_counter", {"entity_mapping": entity_mapping}
-            )
-        },
-    )
-
-    # Format entity_mapping to match the expected output
-    formatted_entity_mapping = {
-        entity_type: {original: masked for original, masked in mappings.items()}
-        for entity_type, mappings in entity_mapping.items()
+    # Define default operators
+    operators = {
+        "PERSON": OperatorConfig("replace", {"new_value": "<PERSON>"}),
+        "LOCATION": OperatorConfig("replace", {"new_value": "<LOCATION>"}),
+        "DEFAULT": OperatorConfig("replace", {"new_value": "<REDACTED>"})
     }
 
-    return anonymized_result.text, formatted_entity_mapping
+    anonymized_result = anonymizer_engine.anonymize(
+        text=text,
+        analyzer_results=presidio_analyzer_results,
+        operators=operators
+    )
 
+    # Extract the anonymized entities
+    entity_mapping = {
+        item.entity_type: {text[item.start:item.end]: item.text}
+        for item in anonymized_result.items
+    }
+
+    return anonymized_result.text, entity_mapping
 
 def detect_pii_in_image(image_data: str) -> list:
     """
