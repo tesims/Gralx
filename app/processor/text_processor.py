@@ -10,9 +10,10 @@ import json
 import io
 import tempfile
 
-from utils.pii_detector import *
-from utils.mask_generator import *
-from utils.context_analyzer import *
+from app.utils.pii_detector import *
+from app.utils.mask_generator import *
+from app.utils.mask_generator import *
+from app.utils.context_analyzer import *
 
 
 def process_text(file_path: str, api_key: str, data_usage: str, llm_model: str) -> str:
@@ -86,7 +87,7 @@ def mask_json(data: Union[Dict, List], api_key: str, data_usage: str, llm_model:
         return data
 
 
-def process_file(input_file_path: str, api_key: str, data_usage: str, llm_model: str, output_file_path: str = None) -> str:
+def process_text_file(input_file_path: str, api_key: str, data_usage: str, llm_model: str, output_file_path: str = None) -> str:
     """Process a file to mask PII, preserving the original file type and structure."""
     # Get the file extension
     _, file_extension = os.path.splitext(input_file_path)

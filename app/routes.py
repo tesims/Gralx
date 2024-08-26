@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request,
 from app.extensions import db
 from app.models import User, Project, Media
 from app.forms import DashboardForm
+from app.processor.main_processor import *
 import uuid
 from flask import jsonify
 
@@ -104,21 +105,22 @@ def process_project(project_id):
     try:
         # Determine which processing function to use based on media type
         if media.media_type == 'video':
-            processed_file_path = process_video(media.original_file_path, project)
+            pass
         elif media.media_type == 'audio':
-            processed_file_path = process_audio(media.original_file_path, project)
+            pass
         elif media.media_type == 'image':
-            processed_file_path = process_image(media.original_file_path, project)
+            pass
         elif media.media_type == 'text':
-            processed_file_path = process_text(media.original_file_path, project)
+            pass
         else:
             return jsonify({"error": "Unsupported media type"}), 400
 
         # Update the media record with the processed file path
-        media.processed_file_path = processed_file_path
-        db.session.commit()
+        # media.processed_file_path = processed_file_path
+        # db.session.commit()
 
-        return jsonify({"message": "Processing complete", "processed_file_path": processed_file_path}), 200
+        pass
+        # return jsonify({"message": "Processing complete", "processed_file_path": processed_file_path}), 200
 
     except Exception as e:
         db.session.rollback()

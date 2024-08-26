@@ -1,10 +1,7 @@
 
 # main_processor.py
 # Main processor to handle different media types for PII masking
-from text_processor import *
-from image_processor import *
-from audio_processor import *
-from video_processor import *
+from app.processor.text_processor import *
 
 
 def process_media(media_path: str, media_type: str) -> str:

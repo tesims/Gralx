@@ -5,7 +5,7 @@ from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import EngineResult, OperatorConfig
 from typing import Dict, List
 
-from pii_detector import *
+from app.utils.pii_detector import *
 
 def generate_text_mask(text: str, pii_characteristics: Dict[str, List[str]], replacements: Dict[str, str]) -> str:
     """

@@ -4,7 +4,7 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine, OperatorConfig
 from presidio_anonymizer.operators import Operator, OperatorType
 
-from typing import Dict
+from typing import List, Dict
 from pprint import pprint
 
 class InstanceCounterAnonymizer(Operator):
@@ -61,7 +61,7 @@ class InstanceCounterAnonymizer(Operator):
     def operator_type(self) -> OperatorType:
         return OperatorType.Anonymize
 
-def detect_pii_in_text(text: str) -> List[dict]:
+def detect_pii_in_text(text: str) -> list[dict]:
     """
     Detect PII in a text string.
     :param text: Input text.
@@ -89,7 +89,7 @@ def detect_pii_in_text(text: str) -> List[dict]:
 
     return formatted_results
 
-def get_anonymized_text(text: str, analyzer_results: List[Dict]) -> Tuple[str, Dict]:
+def get_anonymized_text(text: str, analyzer_results: List[Dict]) -> tuple[str, Dict]:
     """
     Get Redacted Text with PII Variables Mapped
     :param text: original text
