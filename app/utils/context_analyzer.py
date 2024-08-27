@@ -1,8 +1,12 @@
 # context_analyzer.py
 # Functions to analyze context around PII using LLMs
+import time
+import random
 from openai import OpenAI
 from typing import Dict, List
 from app.utils.pii_detector import *
+from config import OPENAI_API_KEY
+
 
 def get_context_characteristics(api_key: str, pii_variables: Dict[str, str], data_usage: str,
                                 unmasked_text: str, redacted_text: str, llm_model: str) -> Dict[str, List[str]]:
@@ -40,6 +44,7 @@ def get_context_characteristics(api_key: str, pii_variables: Dict[str, str], dat
     Provide a structured response with the PII variable type as the key and a list of important characteristics as the value.
     """
 
+    client = OpenAI(api_key=OPENAI_API_KEY)
     try:
         response = client.chat.completions.create(model=llm_model,
         messages=[
@@ -65,6 +70,7 @@ def get_context_characteristics(api_key: str, pii_variables: Dict[str, str], dat
         print(f"An error occurred: {e}")
         return {}
 
+
 def generate_pii_replacement(api_key: str, pii_characteristics: Dict[str, List[str]], llm_model: str) -> Dict[str, str]:
     """
     Generate pseudonymized replacements for PII variables based on their characteristics.
@@ -74,8 +80,9 @@ def generate_pii_replacement(api_key: str, pii_characteristics: Dict[str, List[s
     :param llm_model: Name of the LLM model to use
     :return: Dictionary of PII types and their generated replacements
     """
-
+    client = OpenAI(api_key=api_key)
     replacements = {}
+    max_retries = 5
 
     for variable, characteristics in pii_characteristics.items():
         prompt = f"""
@@ -88,20 +95,29 @@ def generate_pii_replacement(api_key: str, pii_characteristics: Dict[str, List[s
         Provide only the generated replacement without any additional explanation or context.
         """
 
-        try:
-            response = client.chat.completions.create(model=llm_model,
-            messages=[
-                {"role": "system", "content": "You are an AI assistant specialized in generating pseudonymized PII data."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=50)
+        for attempt in range(max_retries):
+            try:
+                response = client.chat.completions.create(
+                    model=llm_model,
+                    messages=[
+                        {"role": "system", "content": "You are an AI assistant specialized in generating pseudonymized PII data."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.7,
+                    max_tokens=50
+                )
 
-            replacement = response.choices[0].message.content.strip()
-            replacements[variable] = replacement
+                replacement = response.choices[0].message.content.strip()
+                replacements[variable] = replacement
+                break  # Success, exit the retry loop
 
-        except Exception as e:
-            print(f"An error occurred while generating replacement for {variable}: {e}")
-            replacements[variable] = f"[ERROR: Unable to generate replacement for {variable}]"
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    print(f"Failed to generate replacement for {variable} after {max_retries} attempts: {e}")
+                    replacements[variable] = f"[ERROR: Unable to generate replacement for {variable}]"
+                else:
+                    wait_time = (2 ** attempt) + random.uniform(0, 1)
+                    print(f"Error generating replacement for {variable}. Retrying in {wait_time:.2f} seconds...")
+                    time.sleep(wait_time)
 
     return replacements

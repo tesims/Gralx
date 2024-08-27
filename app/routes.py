@@ -7,6 +7,10 @@ from app.forms import DashboardForm
 from app.processor.main_processor import *
 import uuid
 from flask import jsonify
+from app.utils.pii_detector import detect_pii_in_text, get_anonymized_text
+from app.utils.context_analyzer import get_context_characteristics, generate_pii_replacement
+from app.utils.mask_generator import generate_text_mask
+from app.models import PII_Variable, Context_Analysis, Process_Log, Report
 
 main_bp = Blueprint('main', __name__)
 

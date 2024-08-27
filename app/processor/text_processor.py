@@ -17,20 +17,12 @@ from app.utils.context_analyzer import *
 
 
 def process_text(file_path: str, api_key: str, data_usage: str, llm_model: str) -> str:
-    """
-    Process a text file to mask PII, preserving the original file type and structure.
-    
-    :param file_path: Path to the input text file
-    :param project: Dictionary containing project information including API key, data usage, and model
-    :return: Path to the output file with masked PII
-    """
-
     # Get the file extension
     _, file_extension = os.path.splitext(file_path)
     file_extension = file_extension.lower()
 
     # Read and process the file based on its type
-    if file_extension == '.txt':
+    if file_extension in ['', '.txt']:
         with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read()
         masked_content = mask_text(content, api_key, data_usage, llm_model)
@@ -53,7 +45,7 @@ def process_text(file_path: str, api_key: str, data_usage: str, llm_model: str) 
     output_file_path = os.path.join(output_dir, f"masked_{file_name}")
 
     # Write the masked content to the output file
-    if file_extension == '.txt':
+    if file_extension in ['', '.txt']:
         with open(output_file_path, 'w', encoding='utf-8') as f:
             f.write(masked_content)
     elif file_extension == '.csv':
@@ -65,7 +57,6 @@ def process_text(file_path: str, api_key: str, data_usage: str, llm_model: str) 
             json.dump(masked_content, f, indent=2)
 
     return output_file_path
-
 
 def mask_text(text: str, api_key: str, data_usage: str, llm_model: str) -> str:
     """Helper function to mask a single text string"""

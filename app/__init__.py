@@ -1,13 +1,13 @@
 import os
 from flask import Flask
-from config import Config
 from app.extensions import db, migrate
 from app import models
+import config
 
 
-def create_app(config_class=Config):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config)
 
     # Ensure the upload folder exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
