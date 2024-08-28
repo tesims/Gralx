@@ -7,3 +7,30 @@ venv/
 app/uploads/
 **/*.pyc
 __pycache__/
+
+# BMF library
+bmf/
+**/bmf/
+**/bmf_*
+
+# BMF build artifacts
+build/
+**/build/
+
+# BMF compiled files
+*.so
+*.dll
+*.dylib
+
+# BMF cache
+.bmf_cache/
+**/.bmf_cache/
+
+# BMF log files
+*.log
+bmf_*.log
+
+# BMF temporary files
+*.tmp
+bmf_*.tmp
+
