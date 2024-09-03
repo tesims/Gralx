@@ -34,3 +34,4 @@ bmf_*.log
 *.tmp
 bmf_*.tmp
 
+checkpoints_v2/converter/checkpoint.pth
