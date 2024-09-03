@@ -1,6 +1,6 @@
 import os
 from werkzeug.utils import secure_filename
-from flask import Blueprint, render_template, flash, redirect, url_for, request, session, current_app, send_file
+from flask import Blueprint, render_template, flash, redirect, url_for, request, session, current_app, send_file, send_from_directory
 from app.extensions import db
 from app.models import User, Project, Media
 from app.forms import DashboardForm
@@ -11,6 +11,8 @@ from app.utils.pii_detector import detect_pii_in_text, get_anonymized_text
 from app.utils.context_analyzer import get_context_characteristics, generate_pii_replacement
 from app.utils.mask_generator import generate_text_mask
 from app.models import PII_Variable, Context_Analysis, Process_Log, Report
+from flask import render_template, jsonify, current_app
+import traceback
 
 main_bp = Blueprint('main', __name__)
 
@@ -84,12 +86,6 @@ def dashboard():
 
     return render_template('dashboard.html', title='Dashboard', form=form)
 
-@main_bp.route('/project/<uuid:project_id>')
-def project_detail(project_id):
-    project = Project.query.get_or_404(project_id)
-    media = Media.query.filter_by(project_id=project.project_id).first()
-    return render_template('project_detail.html', project=project, media=media)
-
 @main_bp.route('/documentation')
 def documentation():
     return render_template('documentation.html', title='Documentation')
@@ -98,34 +94,46 @@ def documentation():
 def profile():
     return render_template('profile.html', title='Profile')
 
-@main_bp.route('/process/<uuid:project_id>', methods=['POST'])
-def process_project(project_id):
+
+
+@main_bp.route('/project/<uuid:project_id>')
+def project_detail(project_id):
     project = Project.query.get_or_404(project_id)
     media = Media.query.filter_by(project_id=project.project_id).first()
+    return render_template('project_detail.html', project=project, media=media)
 
-    if not media:
-        return jsonify({"error": "No media found for this project"}), 404
-
+@main_bp.route('/process/<uuid:project_id>', methods=['POST'])
+def process_project(project_id):
     try:
-        # Determine which processing function to use based on media type
-        if media.media_type == 'video':
-            pass
-        elif media.media_type == 'audio':
-            pass
-        elif media.media_type == 'image':
-            pass
-        elif media.media_type == 'text':
-            pass
-        else:
-            return jsonify({"error": "Unsupported media type"}), 400
-
-        # Update the media record with the processed file path
-        # media.processed_file_path = processed_file_path
-        # db.session.commit()
-
-        pass
-        # return jsonify({"message": "Processing complete", "processed_file_path": processed_file_path}), 200
-
+        project = Project.query.get_or_404(project_id)
+        
+        # Hardcoded transcript
+        transcript = "Patient John Doe, age 47, presents with symptoms of hypertension. He has been prescribed Lisinopril 10 mg daily, with a follow-up scheduled in two nweeks. His previous address was in the downtown area near Elm Street, but he recently moved to a residential neighborhood near Maple Avenue in Springfield."
+        
+        current_app.logger.info(f"Processing project: {project.name}")
+        current_app.logger.info(f"Transcript: {transcript}")
+        
+        # Check if the audio file exists
+        audio_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'test_audio3.mp3')
+        if not os.path.exists(audio_file_path):
+            raise FileNotFoundError(f"Audio file not found: {audio_file_path}")
+        
+        return jsonify({
+            'status': 'success',
+            'transcript': transcript,
+            'audio_url': url_for('main.download_audio', filename='test_audio3.mp3')
+        })
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.error(f"Error processing project: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@main_bp.route('/download_audio')
+def download_audio():
+    # Direct path to the file
+    file_path = "/Users/academics/Documents/graxl/graxl-2/app/uploads"
+    filename = "test_audio3.mp3"
+    return send_from_directory(file_path, filename, as_attachment=True)

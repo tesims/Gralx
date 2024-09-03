@@ -1,0 +1,3 @@
+[console_scripts]
+whisper_timestamped = whisper_timestamped.transcribe:cli
+whisper_timestamped_make_subtitles = whisper_timestamped.make_subtitles:cli

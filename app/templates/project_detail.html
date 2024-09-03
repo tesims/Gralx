@@ -1,145 +1,66 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Project Details</h1>
-        <h2>Project Information</h2>
-        <table class="table table-bordered">
-            <tr>
-                <th>Variable</th>
-                <th>Value</th>
-            </tr>
-            <tr>
-                <th>Project ID</th>
-                <td>{{ project.project_id }}</td>
-            </tr>
-            <tr>
-                <th>Project Name</th>
-                <td>{{ project.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ project.description }}</td>
-            </tr>
-            <tr>
-                <th>Sector</th>
-                <td>{{ project.sector }}</td>
-            </tr>
-            <tr>
-                <th>Country</th>
-                <td>{{ project.country }}</td>
-            </tr>
-            <tr>
-                <th>Mask Face</th>
-                <td>{{ project.mask_face }}</td>
-            </tr>
-            <tr>
-                <th>Mask Fullbody</th>
-                <td>{{ project.mask_fullbody }}</td>
-            </tr>
-            <tr>
-                <th>Mask Logo</th>
-                <td>{{ project.mask_logo }}</td>
-            </tr>
-            <tr>
-                <th>Mask Location</th>
-                <td>{{ project.mask_location }}</td>
-            </tr>
-            <tr>
-                <th>Terms Accepted</th>
-                <td>{{ project.terms }}</td>
-            </tr>
-            <tr>
-                <th>User ID</th>
-                <td>{{ project.user_id }}</td>
-            </tr>
-            <tr>
-                <th>Session ID</th>
-                <td>{{ project.session_id }}</td>
-            </tr>
-            <tr>
-                <th>Created At</th>
-                <td>{{ project.created_at }}</td>
-            </tr>
-        </table>
-
-        {% if media %}
-        <h2>Associated Media</h2>
-        <table class="table table-bordered">
-            <tr>
-                <th>Variable</th>
-                <th>Value</th>
-            </tr>
-            <tr>
-                <th>Media ID</th>
-                <td>{{ media.media_id }}</td>
-            </tr>
-            <tr>
-                <th>Project ID</th>
-                <td>{{ media.project_id }}</td>
-            </tr>
-            <tr>
-                <th>Media Type</th>
-                <td>{{ media.media_type }}</td>
-            </tr>
-            <tr>
-                <th>Original File Path</th>
-                <td>{{ media.original_file_path }}</td>
-            </tr>
-            <tr>
-                <th>Processed File Path</th>
-                <td id="processedFilePath">{{ media.processed_file_path or 'Not processed yet' }}</td>
-            </tr>
-            <tr>
-                <th>User ID</th>
-                <td>{{ media.user_id }}</td>
-            </tr>
-            <tr>
-                <th>Session ID</th>
-                <td>{{ media.session_id }}</td>
-            </tr>
-        </table>
-
-        {% if not media.processed_file_path %}
-            <button id="processButton" class="btn btn-primary mt-3">Process Media</button>
-            <div id="processingStatus" class="mt-2"></div>
-        {% else %}
-            <p class="mt-3">Media has been processed.</p>
-        {% endif %}
-
-        {% else %}
+<div class="container mt-5">
+    <h1>Project Details</h1>
+    <p>Project Name: {{ project.name }}</p>
+    <p>Description: {{ project.description }}</p>
+    <p>Sector: {{ project.sector }}</p>
+    <p>Country: {{ project.country }}</p>
+    
+    <h2>Media</h2>
+    {% if media %}
+        <p>Media Type: {{ media.media_type }}</p>
+        <p>Original File: {{ media.original_file_path }}</p>
+    {% else %}
         <p>No media associated with this project.</p>
-        {% endif %}
-
-        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
-    </div>
-
-    {% if media and not media.processed_file_path %}
-    <script>
-    document.getElementById('processButton').addEventListener('click', function() {
-        this.disabled = true;
-        document.getElementById('processingStatus').innerHTML = 'Processing...';
-
-        fetch('/process/{{ project.project_id }}', {
-            method: 'POST',
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                document.getElementById('processingStatus').innerHTML = 'Error: ' + data.error;
-            } else {
-                document.getElementById('processingStatus').innerHTML = 'Processing complete.';
-                document.getElementById('processedFilePath').innerHTML = data.processed_file_path;
-                this.style.display = 'none';
-            }
-        })
-        .catch(error => {
-            document.getElementById('processingStatus').innerHTML = 'An error occurred during processing.';
-        })
-        .finally(() => {
-            this.disabled = false;
-        });
-    });
-    </script>
     {% endif %}
+
+    <form id="processForm" action="{{ url_for('main.process_project', project_id=project.project_id) }}" method="POST">
+        <button type="submit" class="btn btn-primary">Process</button>
+    </form>
+
+    <div id="results" class="mt-4"></div>
+    <div id="error" class="mt-4 text-danger"></div>
+</div>
+
+<script>
+document.getElementById('processForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    document.getElementById('results').innerHTML = '<p>Processing... Please wait.</p>';
+    document.getElementById('error').innerHTML = '';
+    
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            let resultsHtml = `
+                <h2>Processing Results</h2>
+                <h3>Transcript</h3>
+                <pre>${data.transcript}</pre>
+                <h3>Processed Audio</h3>
+                <audio controls>
+                    <source src="${data.audio_url}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <a href="${data.audio_url}" class="btn btn-primary mt-3">Download Audio</a>
+            `;
+            document.getElementById('results').innerHTML = resultsHtml;
+        } else {
+            document.getElementById('error').innerHTML = `<p>Error: ${data.message}</p>`;
+            document.getElementById('results').innerHTML = '';
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        document.getElementById('error').innerHTML = '<p>An error occurred during processing.</p>';
+        document.getElementById('results').innerHTML = '';
+    });
+});
+</script>
 {% endblock %}

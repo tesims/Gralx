@@ -58,25 +58,6 @@ def process_text(file_path: str, api_key: str, data_usage: str, llm_model: str) 
 
     return output_file_path
 
-def mask_text(text: str, api_key: str, data_usage: str, llm_model: str) -> str:
-    """Helper function to mask a single text string"""
-    analyzer_results = detect_pii_in_text(text)
-    anonymized_text, entity_mapping = get_anonymized_text(text, analyzer_results)
-    pii_variables = {result.entity_type: result.text for result in analyzer_results}
-    context_analysis = get_context_characteristics(api_key, pii_variables, data_usage, text, anonymized_text, llm_model)
-    replacements = generate_pii_replacement(api_key, context_analysis, llm_model)
-    return generate_text_mask(text, context_analysis, replacements)
-
-
-def mask_json(data: Union[Dict, List], api_key: str, data_usage: str, llm_model: str) -> Union[Dict, List]:
-    """Helper function to mask JSON data"""
-    if isinstance(data, dict):
-        return {k: mask_json(v, api_key, data_usage, llm_model) if isinstance(v, (dict, list)) else mask_text(str(v), api_key, data_usage, llm_model) for k, v in data.items()}
-    elif isinstance(data, list):
-        return [mask_json(item, api_key, data_usage, llm_model) if isinstance(item, (dict, list)) else mask_text(str(item), api_key, data_usage, llm_model) for item in data]
-    else:
-        return data
-
 
 def process_text_file(input_file_path: str, api_key: str, data_usage: str, llm_model: str, output_file_path: str = None) -> str:
     """Process a file to mask PII, preserving the original file type and structure."""

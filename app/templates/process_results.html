@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Processing Results for {{ project.name }}</h1>
+    <h2>Transcript</h2>
+    <pre>{{ transcript }}</pre>
+
+    <h2>Processed Audio</h2>
+    <audio controls>
+        <source src="{{ url_for('main.download_audio', filename='test_audio3.mp3') }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <a href="{{ url_for('main.download_audio', filename='test_audio3.mp3') }}" class="btn btn-primary mt-3">Download Audio</a>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('main.project_detail', project_id=project.project_id) }}" class="btn btn-secondary">Back to Project Details</a>
+    </div>
+</div>
+{% endblock %}

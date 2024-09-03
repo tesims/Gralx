@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "graxl-2",
+			"path": "."
+		},
+		{
+			"name": "checkpoints_v2",
+			"path": "../../../Downloads/checkpoints_v2"
+		}
+	],
+	"settings": {}
+}
