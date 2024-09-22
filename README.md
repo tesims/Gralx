@@ -1,4 +1,4 @@
-# Graxl: Multimodal Context-Preserving Data Masking
+# Gralx: Multimodal Context-Preserving Data Masking
 
 The Multimodal Context-Preserving Data Masking API is an open-source privacy layer designed for companies building products on top of large public models or their own proprietary models. This API enables the seamless integration of advanced data masking techniques into existing applications, ensuring the protection of sensitive information while preserving the vital context necessary for accurate model performance.
 Features
